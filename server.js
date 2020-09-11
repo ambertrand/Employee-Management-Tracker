@@ -2,7 +2,11 @@ const connection = require("./database/connection")
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 
-
+const endApp = () => {
+    console.log("Goodbye!");
+    connection.end();
+    process.exit();
+}
 
 
 start = () => {
@@ -18,7 +22,8 @@ start = () => {
             "Add Employee",
             "Add Department",
             "Add Role",
-            "Update Employee Role"
+            "Update Employee Role",
+            "Exit Application"
         ]
     })
 }
