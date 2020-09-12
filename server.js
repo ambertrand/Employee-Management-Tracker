@@ -1,5 +1,6 @@
 const connection = require("./database/connection")
 const inquirer = require("inquirer");
+const cTable = require("console.table");
 
 // Exit function
 // const endApp = () => {
@@ -18,7 +19,7 @@ start = (connection) => {
             choices: [
                 "View All Employees",
                 "View All Employees by Department",
-                "View All Employees by Manager",
+                "View All Employees by Role",
                 "Add Employee",
                 "Add Department",
                 "Add Role",
@@ -34,6 +35,19 @@ start = (connection) => {
                     console.table(data);
                 });
                 break;
+            case "View All Employees by Department":
+                connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name AS department FROM employee LEFT JOIN department on employee.role_id = department.id;", function (err, data) {
+                    if (err) throw err;
+                    console.table(data);
+                });
+                break;
+            case "View All Employees by Role":
+                connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title AS role FROM employee LEFT JOIN role on employee.role_id = role.id;", function (err, data) {
+                    if (err) throw err;
+                    console.table(data);
+                });
+                break;
+
         }
     })
 }
