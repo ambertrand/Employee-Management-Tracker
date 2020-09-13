@@ -15,7 +15,7 @@ start = (connection) => {
         {
             name: "startFunc",
             type: "rawlist",
-            message: "What would you like to do?",
+            message: "Welcome to your Employee Database. \n What would you like to do?",
             choices: [
                 "View All Employees",
                 "View All Employees by Department",
@@ -27,32 +27,56 @@ start = (connection) => {
                 "Exit Application"
             ]
         }
-    ]).then(function (answers) {
+     ]).then(function (answers) {
         switch (answers.startFunc) {
             case "View All Employees":
-                connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;", function (err, data) {
-                    if (err) throw err;
-                    console.table(data);
-                });
+                viewEmployees();
+                // connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;", function (err, data) {
+                //     if (err) throw err;
+                //     console.table(data);
+                // });
                 break;
             case "View All Employees by Department":
-                connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name AS department FROM employee LEFT JOIN department on employee.role_id = department.id;", function (err, data) {
-                    if (err) throw err;
-                    console.table(data);
-                });
+                viewByDepartments();
+                // connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name AS department FROM employee LEFT JOIN department on employee.role_id = department.id;", function (err, data) {
+                //     if (err) throw err;
+                //     console.table(data);
+                // });
                 break;
             case "View All Employees by Role":
-                connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title AS role FROM employee LEFT JOIN role on employee.role_id = role.id;", function (err, data) {
-                    if (err) throw err;
-                    console.table(data);
-                });
+                viewByRoles();
+                // connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title AS role FROM employee LEFT JOIN role on employee.role_id = role.id;", function (err, data) {
+                //     if (err) throw err;
+                //     console.table(data);
+                // });
                 break;
-
         }
     })
 }
 
+viewEmployees = () => {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;", function (err, data) {
+        if (err) throw err;
+        console.table(data);
+        start();
+    });
+}
 
+viewByDepartments = () => {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, department.name AS department FROM employee LEFT JOIN department on employee.role_id = department.id;", function (err, data) {
+        if (err) throw err;
+        console.table(data);
+        start();
+    });
+}
+
+viewByRoles = () => {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title AS role FROM employee LEFT JOIN role on employee.role_id = role.id;", function (err, data) {
+        if (err) throw err;
+        console.table(data);
+        start();
+    });
+}
 
 
 // Starts prompts for user in terminal
