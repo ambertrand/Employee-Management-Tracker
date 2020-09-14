@@ -115,7 +115,6 @@ addEmployee = () => {
                 }
             ]).then(function (answers) {
                 newEmployee.push(answers.firstName, answers.lastName);
-                console.log(newEmployee);
             });
         } catch (err) {
             console.log(err);
@@ -136,7 +135,6 @@ addEmployee = () => {
                     }
                 ]).then(function (answers) {
                     newEmployee.push(answers.employeeRole);
-                    console.log(newEmployee);
                 });
             } catch (err) {
                 console.log(err);
@@ -281,7 +279,6 @@ employeeUpdate = () => {
 endApp = () => {
     console.log("Goodbye!");
     connection.end();
-    process.exit();
 }
 
 // Starts prompts for user in terminal
