@@ -32,7 +32,7 @@ For this project working with MYSQL was completely new so it took some time to g
 ![employees screenshot](https://user-images.githubusercontent.com/65721950/93040919-2b57a180-f619-11ea-901a-421b5d0c2a99.png)
 
 ## Video Link
-[Watch Video](https://www.youtube.com/watch?v=0Ndc7b0wrq8&t=1s)
+[Watch Video](https://www.youtube.com/watch?v=AwSxpIpiAXo)
 
 
 # License
