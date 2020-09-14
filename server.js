@@ -13,8 +13,10 @@ promptStart = () => {
     *  WELCOME TO YOUR EMPLOYEE DATABASE    *
     *                                       *
     *                                       *
-    *                                       *
-    *                                       *
+    *   SELECT AN OPTION FROM THE LIST      *
+    * OR SELECT EXIT TO CLOSE THE DATABASE  *
+    -----------------------------------------
+    
     `)
 }
 
@@ -283,4 +285,4 @@ endApp = () => {
 }
 
 // Starts prompts for user in terminal
-start();
+init();
