@@ -2,12 +2,6 @@ const connection = require("./database/connection")
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 
-// Exit function
-// const endApp = () => {
-//     console.log("Goodbye!");
-//     connection.end();
-//     process.exit();
-// }
 
 
 start = () => {
@@ -32,10 +26,10 @@ start = () => {
             case "View All Employees":
                 viewEmployees();
                 break;
-            case "View All Employees by Department":
+            case "View All Departments":
                 viewByDepartments();
                 break;
-            case "View All Employees by Role":
+            case "View All Roles":
                 viewByRoles();
                 break;
             case "Add Employee":
@@ -46,6 +40,9 @@ start = () => {
                 break;
             case "Add Role":
                 addRole();
+                break;
+            case "Exit Database":
+                endApp();
                 break;
         }
     })
@@ -61,7 +58,7 @@ viewEmployees = () => {
 }
 
 viewByDepartments = () => {
-    connection.query("SELECT * fROM department;", function (err, data) {
+    connection.query("SELECT * FROM department;", function (err, data) {
         if (err) throw err;
         console.table(data);
         start();
@@ -162,6 +159,55 @@ addDepartment = () => {
             start();
         });
     })
+}
+
+addRole = () => {
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "newRole",
+                message: "What role do you want to add?"
+            },
+            {
+                type: "input",
+                name: "newSalary",
+                message: "What is the salary for this new role?"
+            },
+            {
+                type: "list",
+                name: "deptRole",
+                message: "What department is the new role in?",
+                choices: res.map(function (roleRow) {
+                    return {
+                        name: roleRow.name,
+                        value: roleRow.id
+                    }
+                })
+            }
+        ]).then(function (answers) {
+            connection.query("INSERT INTO role (??) VALUES (?, ?, ?)", [["title", "salary", "department_id"], answers.newRole, answers.newSalary, answers.deptRole], function (err, res) {
+                if (err) throw err;
+                console.log("A new role has been added to your Database");
+                start();
+            })
+        })
+    })
+}
+
+
+
+
+
+
+
+
+// Exit function
+endApp = () => {
+    console.log("Goodbye!");
+    connection.end();
+    process.exit();
 }
 
 
