@@ -2,7 +2,27 @@ const connection = require("./database/connection")
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 
+let newEmployee = [];
+let updatedEmployee = [];
 
+promptStart = () => {
+
+    console.log(`
+    
+    -----------------------------------------
+    *  WELCOME TO YOUR EMPLOYEE DATABASE    *
+    *                                       *
+    *                                       *
+    *                                       *
+    *                                       *
+    `)
+}
+
+
+init = () => {
+    promptStart();
+    start();
+}
 
 start = () => {
     inquirer.prompt([
@@ -41,6 +61,9 @@ start = () => {
             case "Add Role":
                 addRole();
                 break;
+            case "Update Employee Role":
+                updateEmployee();
+                break;
             case "Exit Database":
                 endApp();
                 break;
@@ -75,7 +98,6 @@ viewByRoles = () => {
 
 // Add employee, department & role functions
 addEmployee = () => {
-    let newEmployee = [];
     connection.query("SELECT * from employee", async (err, results) => {
         try {
             const newName = await inquirer.prompt([
@@ -117,7 +139,7 @@ addEmployee = () => {
             } catch (err) {
                 console.log(err);
             }
-            connection.query("SELECT * FROM employee WHERE manager_id IS NULL", async (err, mangresults) => {
+            connection.query("SELECT * FROM employee WHERE manager_id IS NULL;", async (err, mangresults) => {
                 try {
                     const newManager = await inquirer.prompt([
                         {
@@ -127,13 +149,13 @@ addEmployee = () => {
                             choices: mangresults.map(function (manag) {
                                 return {
                                     name: manag.first_name + " " + manag.last_name,
-                                    value: manag.manager_id
+                                    value: manag.id
                                 }
                             })
                         }
                     ]).then(function (answers) {
                         newEmployee.push(answers.employeeManager);
-                        connection.query("INSERT INTO employee (??) VALUES (?, ?, ?, ?)", [["first_name", "last_name", "role_id", "manager_id"], newEmployee[0], newEmployee[1], newEmployee[2], newEmployee[3]], function (err, newEmpResults) {
+                        connection.query("INSERT INTO employee (??) VALUES (?, ?, ?, ?);", [["first_name", "last_name", "role_id", "manager_id"], newEmployee[0], newEmployee[1], newEmployee[2], newEmployee[3]], function (err, newEmpResults) {
                             if (err) throw err;
                             console.log("A New Employee has been added to your Database!");
                             start();
@@ -153,7 +175,7 @@ addDepartment = () => {
         name: "newDepart",
         message: "What department do you want to add?"
     }).then(function (answers) {
-        connection.query("INSERT INTO department (name) VALUES (?)", answers.newDepart, function (err, results) {
+        connection.query("INSERT INTO department (name) VALUES (?);", answers.newDepart, function (err, results) {
             if (err) throw err;
             console.log("A new department has been added to your Database.");
             start();
@@ -162,7 +184,7 @@ addDepartment = () => {
 }
 
 addRole = () => {
-    connection.query("SELECT * FROM department", function (err, res) {
+    connection.query("SELECT * FROM department;", function (err, res) {
         if (err) throw err;
         inquirer.prompt([
             {
@@ -187,7 +209,7 @@ addRole = () => {
                 })
             }
         ]).then(function (answers) {
-            connection.query("INSERT INTO role (??) VALUES (?, ?, ?)", [["title", "salary", "department_id"], answers.newRole, answers.newSalary, answers.deptRole], function (err, res) {
+            connection.query("INSERT INTO role (??) VALUES (?, ?, ?);", [["title", "salary", "department_id"], answers.newRole, answers.newSalary, answers.deptRole], function (err, res) {
                 if (err) throw err;
                 console.log("A new role has been added to your Database");
                 start();
@@ -197,11 +219,61 @@ addRole = () => {
 }
 
 
+updateEmployee = () => {
+    connection.query("SELECT id, role_id, CONCAT (first_name,' ', last_name) AS name FROM employee", async (err, res) => {
+        try {
+            const editedEmployee = await inquirer.prompt([
+                {
+                    type: "list",
+                    name: "updateEmp",
+                    message: "What employee do you want to update?",
+                    choices: res.map(function (empRow) {
+                        return {
+                            name: empRow.name,
+                            value: empRow.id
+                        }
+                    })
+                }
+            ]).then(function (answers) {
+                updatedEmployee.push(answers.updateEmp);
+            });
+        } catch (err) {
+            console.log(err);
+        }
+        connection.query("SELECT * FROM role", async (err, res) => {
+            try {
+                const updatedRole = await inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "roleUpdated",
+                        message: "Select the employee's role",
+                        choices: res.map(function(empNewRole) {
+                            return {
+                                name: empNewRole.title,
+                                value: empNewRole.id
+                            }
+                        })
+                    }
+                ]).then(function (answers) {
+                    updatedEmployee.push(answers.roleUpdated);
+                    employeeUpdate(answers);
+                });
+            } catch (err) {
+                console.log(err);
+                
+            }
+        })
+        start();
+    });
+}
 
-
-
-
-
+employeeUpdate = () => {
+    connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [updatedEmployee[1], updatedEmployee[0], function (err, res) {
+        if (err) throw err;
+        console.log("You have successfully updated the employee's role.");
+        start();
+    }])
+}
 
 // Exit function
 endApp = () => {
@@ -209,7 +281,6 @@ endApp = () => {
     connection.end();
     process.exit();
 }
-
 
 // Starts prompts for user in terminal
 start();
